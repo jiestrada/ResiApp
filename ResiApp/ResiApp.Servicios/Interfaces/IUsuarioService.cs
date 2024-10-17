@@ -10,5 +10,6 @@ namespace ResiApp.Services.Interfaces
         Response<string> AddUsuario(Usuario usuario);
         Response<string> UpdateUsuario(Usuario usuario);
         Response<string> DeleteUsuario(int id);
+        Response<Usuario?> AuthenticateUser(string email, string password);
     }
 }

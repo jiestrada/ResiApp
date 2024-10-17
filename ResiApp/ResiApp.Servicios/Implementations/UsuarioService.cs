@@ -94,6 +94,31 @@ namespace ResiApp.Services.Implementations
                 return new Response<string>(false, $"Error al eliminar el usuario: {ex.Message}");
             }
         }
+
+        public Response<Usuario?> AuthenticateUser(string email, string password)
+        {
+            try
+            {
+                // Buscar usuario por email
+                var usuario = _context.Usuarios.SingleOrDefault(u => u.Email == email);
+                if (usuario == null)
+                {
+                    return new Response<Usuario>(false, "Usuario no encontrado");
+                }
+
+                // Verificar la contraseña
+                if (usuario.PasswordHash != password)
+                {
+                    return new Response<Usuario>(false, "Credenciales incorrectas");
+                }
+
+                return new Response<Usuario>(true, "Autenticación exitosa", usuario);
+            }
+            catch (Exception ex)
+            {
+                return new Response<Usuario>(false, $"Error al autenticar usuario: {ex.Message}");
+            }
+        }
     }
 }
 
