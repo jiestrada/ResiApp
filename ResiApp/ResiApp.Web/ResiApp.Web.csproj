@@ -7,14 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ResiApp.Herramientas\ResiApp.Tools.csproj" />
     <ProjectReference Include="..\ResiApp.Modelo\ResiApp.Models.csproj" />
     <ProjectReference Include="..\ResiApp.Servicios\ResiApp.Services.csproj" />
     <ProjectReference Include="..\ResiApp.ViewModel\ResiApp.ViewModels.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.6" />
   </ItemGroup>
 
 </Project>

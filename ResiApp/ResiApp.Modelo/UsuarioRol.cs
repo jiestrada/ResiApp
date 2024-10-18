@@ -10,10 +10,7 @@ namespace ResiApp.Models
     [Table("usuarios_roles")]
     public class UsuarioRol
     {
-        [Key]
-        [Column("usuario_rol_id")]
-        public int UsuarioRolId { get; set; }
-
+       
         [Required]
         [Column("usuario_id")]
         public int UsuarioId { get; set; }

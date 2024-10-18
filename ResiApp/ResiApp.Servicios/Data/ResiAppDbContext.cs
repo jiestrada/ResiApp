@@ -59,6 +59,26 @@ namespace ResiApp.Services.Data
         public DbSet<UsuarioRol> UsuariosRol { get; set; }
         public DbSet<Visitante> Visitantes { get; set; }
         public DbSet<VotoEncuesta> VotosEncuesta { get; set; }
-        
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+
+            modelBuilder.Entity<UsuarioRol>()
+                .HasKey(ur => new { ur.UsuarioId, ur.RolId });
+
+            // Configuración para la entidad Mensaje
+            modelBuilder.Entity<Mensaje>()
+                .HasOne(m => m.Remitente)
+                .WithMany(u => u.MensajesEnviados)
+                .HasForeignKey(m => m.RemitenteId);
+
+            modelBuilder.Entity<Mensaje>()
+                .HasOne(m => m.Destinatario)
+                .WithMany(u => u.MensajesRecibidos)
+                .HasForeignKey(m => m.DestinatarioId);
+
+            base.OnModelCreating(modelBuilder);
+        }
+
     }
 }

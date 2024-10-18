@@ -1,6 +1,6 @@
 ﻿
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Iniciar sesión";
     Layout = "~/Views/Shared/_LayoutAuth.cshtml";
 }
 
@@ -12,13 +12,13 @@
         </div>
     </div>
 </div><!-- .nk-block-head -->
-<form action="#" class="form-validate is-alter" autocomplete="off">
+<form id="loginForm" action="#" class="form-validate is-alter">
     <div class="form-group">
         <div class="form-label-group">
             <label class="form-label" for="email-address">Correo electrónico</label>
         </div>
         <div class="form-control-wrap">
-            <input autocomplete="off" type="text" class="form-control form-control-lg" required id="email-address" placeholder="Captura tu correo electrónico">
+            <input type="email" class="form-control form-control-lg" id="email-address" name="email-address" placeholder="Introduce tu correo electrónico" required>
         </div>
     </div><!-- .form-group -->
     <div class="form-group">
@@ -31,13 +31,52 @@
                 <em class="passcode-icon icon-show icon ni ni-eye"></em>
                 <em class="passcode-icon icon-hide icon ni ni-eye-off"></em>
             </a>
-            <input autocomplete="new-password" type="password" class="form-control form-control-lg" required id="password" placeholder="Captura tu contraseña">
+            <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Introduce tu contraseña" required>
         </div>
     </div><!-- .form-group -->
     <div class="form-group">
-        <button class="btn btn-lg btn-primary btn-block">Iniciar sesión</button>
+        <button id="btnIniciarSesion" class="btn btn-lg btn-primary btn-block">Iniciar sesión</button>
     </div>
 </form><!-- form -->
 <div class="form-note-s2 pt-4">
-    ¿Nuevo en nuestra plataforma? <a href="html/pages/auths/auth-register.html">Regístrate aquí</a>
+    ¿Nuevo en nuestra plataforma? <a href="~/Registrarme">Regístrate aquí</a>
 </div>
+@section Scripts{
+    <script>
+
+        document.getElementById('btnIniciarSesion').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            if (!formValidate($("#loginForm"))) {
+                return false;
+            }
+
+            
+            const email = document.getElementById('email-address').value;
+            const password = document.getElementById('password').value;
+            const data = {
+                email: email,
+                password: password
+            };
+            // Llamar a la función sendAjaxRequest
+            const btn = document.getElementById('btnIniciarSesion');
+            habilitarBtn(btn, false, '');
+            sendAjaxRequest('@Url.Content("~/Login/Authenticate")', 'POST', data, function (error, response) {
+                habilitarBtn(btn, true, 'Iniciar sesión');
+                if (error) {
+                    // Manejo del error
+                    Swal.fire("Autenticación!", error.message, "error");
+                } else {
+                    // Manejar la respuesta en caso de éxito
+                    if (response.success) {
+                        window.location.href = "@Url.Content("~/Administrar")";
+                    } else {
+                        Swal.fire("Autenticación!", response.message, "error");
+                    }
+                }
+            });
+        });
+
+    </script>
+
+}
