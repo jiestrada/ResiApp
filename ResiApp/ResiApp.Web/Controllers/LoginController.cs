@@ -37,8 +37,24 @@ namespace ResiApp.Web.Controllers
                 Expires = DateTime.UtcNow.AddMinutes(60) // La duración debe coincidir con la expiración del token
             });
 
-            return Json(new Response<string>(true, authResponse.Message, null));
+            string strUrl = Url.Content("~/Administrar");
+            if (authResponse.Data != null && authResponse.Data.Login==1)
+            {
+                strUrl = Url.Content("~/Bienvenida");
+            }
 
+            return Json(new Response<string>(true, authResponse.Message, null, strUrl));
+
+        }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            // Eliminar la cookie que almacena el token JWT
+            HttpContext.Response.Cookies.Delete("AuthTokenResiApp");
+
+            // Redirigir al usuario a la página de inicio de sesión o página principal
+            return RedirectToAction("Index", "Home");
         }
 
     }

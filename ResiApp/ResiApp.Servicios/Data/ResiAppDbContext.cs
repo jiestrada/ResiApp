@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ResiApp.Models;
 using System;
 using System.Collections.Generic;
@@ -59,12 +60,13 @@ namespace ResiApp.Services.Data
         public DbSet<UsuarioRol> UsuariosRol { get; set; }
         public DbSet<Visitante> Visitantes { get; set; }
         public DbSet<VotoEncuesta> VotosEncuesta { get; set; }
+        public DbSet<TipoSuscripcion> TipoSuscripcion { get; set; }
+        public DbSet<Suscripcion> Suscripcion { get; set; }
+        public DbSet<PagoSuscripcion> PagoSuscripcion { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-
-            modelBuilder.Entity<UsuarioRol>()
-                .HasKey(ur => new { ur.UsuarioId, ur.RolId });
+        {           
 
             // Configuración para la entidad Mensaje
             modelBuilder.Entity<Mensaje>()
@@ -77,8 +79,30 @@ namespace ResiApp.Services.Data
                 .WithMany(u => u.MensajesRecibidos)
                 .HasForeignKey(m => m.DestinatarioId);
 
+
+            var utcDateTimeConverter = new UtcDateTimeConverter();
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                foreach (var property in entityType.GetProperties()
+                    .Where(p => p.ClrType == typeof(DateTime)))
+                {
+                    property.SetValueConverter(utcDateTimeConverter);
+                }
+            }
+
+
+
             base.OnModelCreating(modelBuilder);
         }
 
+    }
+
+    public class UtcDateTimeConverter : ValueConverter<DateTime, DateTime>
+    {
+        public UtcDateTimeConverter() : base(
+            v => DateTime.SpecifyKind(v, DateTimeKind.Utc),  // Guardar como UTC
+            v => DateTime.SpecifyKind(v, DateTimeKind.Utc))  // Leer como UTC
+        { }
     }
 }

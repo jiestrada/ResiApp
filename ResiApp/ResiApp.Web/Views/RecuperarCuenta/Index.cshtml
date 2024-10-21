@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "Recueperar contraseña";
+    Layout = "~/Views/Shared/_LayoutAuth.cshtml";
+}
+
+<div class="nk-block-head">
+    <div class="nk-block-head-content">
+        <h5 class="nk-block-title">Restablecer Contraseña</h5>
+        <div class="nk-block-des">
+            <p>Si olvidaste tu contraseña, te enviaremos un correo con las instrucciones para restablecerla.</p>
+        </div>
+    </div>
+</div><!-- .nk-block-head -->
+<form id="restablecerForm" action="#" class="form-validate is-alter">   
+    <div class="form-group">
+        <div class="form-label-group">
+            <label class="form-label" for="email-address">Correo electrónico</label>
+        </div>
+        <div class="form-control-wrap">
+            <input type="email" class="form-control form-control-lg" id="email-address" name="email-address" placeholder="Introduce tu correo electrónico" required>
+        </div>
+    </div><!-- .form-group -->    
+    <div class="form-group">
+        <button id="btnRestablecer" class="btn btn-lg btn-primary btn-block">Enviar enlace de restablecimiento</button>
+    </div>
+</form><!-- form -->
+<div class="form-note-s2 pt-4">
+    <a href="~/Login">Regresar a iniciar sesión</a>
+</div>
+@section Scripts {
+    <script>
+
+        document.getElementById('btnRestablecer').addEventListener('click', function (event) {
+            event.preventDefault();
+
+            if (!formValidate($("#restablecerForm"))) {
+                return false;
+            }
+
+            const data = {
+                email: document.getElementById('email-address').value,
+                password: ''
+            };
+            // Llamar a la función sendAjaxRequest
+            const btn = document.getElementById('btnRestablecer');
+            habilitarBtn(btn, false, '');
+            sendAjaxRequest('@Url.Content("~/RecuperarCuenta/EnviarEnlace")', 'POST', data, function (error, response) {
+                habilitarBtn(btn, true, 'Enviar enlace de restablecimiento');
+                if (error) {
+                    // Manejo del error
+                    Swal.fire("Restablecer Contraseña!", error.message, "error");
+                } else {
+                    // Manejar la respuesta en caso de éxito
+                    if (response.success) {
+                        document.getElementById("restablecerForm").reset();
+                        Swal.fire(
+                            "Restablecer Contraseña!",
+                            response.message,
+                            "success"
+                        ).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = "@Url.Content("~/Login")"; // Cambia esta URL por la página a la que quieres redirigir
+                            }
+                        });
+
+                    } else {
+                        Swal.fire("Restablecer Contraseña!", response.message, "error");
+                    }
+                }
+            });
+        });
+
+    </script>
+
+}

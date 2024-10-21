@@ -45,13 +45,15 @@ namespace ResiApp.Web.Controllers
                 Contrasena = registerRequest.Contrasena, // Será hasheada en el servicio
                 Activo = true,
                 FechaCreacion = DateTime.UtcNow,
-                Telefono = ""
+                Telefono = "",
+                Login=0
             };
 
             var rolInquilino = new UsuarioRol
             {
                 Usuario = nuevoUsuario,
-                RolId = 3 // ID del rol "Residente Inquilino"
+                RolId = 3,
+                Activo = true
             };
 
             nuevoUsuario.UsuariosRoles = new List<UsuarioRol> { rolInquilino };
@@ -65,7 +67,40 @@ namespace ResiApp.Web.Controllers
             }
 
             string subject = "¡Bienvenido a ResiApp!";
-            string body = $"Hola {nuevoUsuario.Nombre},<br><br>Te damos la bienvenida a ResiApp. Ya puedes comenzar a gestionar tu condominio.";
+
+
+            //string body = $"Hola {nuevoUsuario.Nombre},<br><br>Te damos la bienvenida a ResiApp. Ya puedes comenzar a gestionar tu condominio.";
+            var link = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+            var imagen = $"{Request.Scheme}://{Request.Host}{Request.PathBase}/back/images/logo-dark.png";
+            string body = $@"
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset='UTF-8'>
+            <title>Bienvenido a ResiApp</title>
+        </head>
+        <body style='font-family: Arial, sans-serif; line-height: 1.6; color: #333;'>
+            <div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px;'>
+                <div style='text-align: center;'>
+                    <img src='{imagen}' alt='ResiApp' style='max-width: 150px; margin-bottom: 20px;'>
+                </div>
+                <h2 style='color: #C70039; text-align: center;'>¡Bienvenido a ResiApp!</h2>
+                <p>Estimado(a) <strong>{nuevoUsuario.Nombre} {nuevoUsuario.Apellido}</strong>,</p>
+                <p>Es un placer darte la bienvenida a <strong>ResiApp</strong>, la plataforma diseñada para facilitar la gestión de condominios y la comunicación con tus residentes.</p>
+                <p>Ahora que eres parte de ResiApp, puedes comenzar a gestionar tu condominio de manera eficiente, desde la administración de unidades y residentes hasta la gestión de pagos y mantenimiento.</p>
+                <p>Para comenzar, inicia sesión con tu correo registrado y disfruta de todas las herramientas que hemos creado para ti.</p>
+                <p>Si tienes alguna duda o necesitas asistencia, no dudes en contactarnos. Estamos aquí para ayudarte.</p>
+                <br>
+                <p style='text-align: center;'>¡Bienvenido a la comunidad de ResiApp!</p>
+                <p>Saludos cordiales,<br><strong>El equipo de ResiApp</strong></p>
+                <div style='text-align: center; margin-top: 20px;'>
+                    <a href='{link}' style='text-decoration: none; color: #C70039;'>Visita nuestra web</a>
+                </div>
+            </div>
+        </body>
+        </html>";
+
+
             await _emailService.SendEmailAsync(nuevoUsuario.CorreoElectronico, subject, body);
 
 

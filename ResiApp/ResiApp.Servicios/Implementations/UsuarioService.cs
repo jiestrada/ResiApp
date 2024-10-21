@@ -39,7 +39,7 @@ namespace ResiApp.Services.Implementations
         {
             try
             {
-                var usuario = _context.Usuarios.Find(id);
+                var usuario = _context.Usuarios.Where(u=>u.UsuarioId==id).Include(c=>c.UsuariosRoles).ThenInclude(ur=>ur.Rol).FirstOrDefault();
                 if (usuario == null)
                     return new Response<Usuario?>(false, "Usuario no encontrado");
 
@@ -91,9 +91,14 @@ namespace ResiApp.Services.Implementations
                 _context.SaveChanges();
                 return new Response<string>(true, "Usuario actualizado exitosamente");
             }
+
             catch (DbUpdateConcurrencyException)
             {
                 return new Response<string>(false, "Error de concurrencia al actualizar el usuario");
+            }
+            catch (DbUpdateException ex)
+            {
+                return new Response<string>(false, $"Error al actualizar el usuario: {ex.Message}");
             }
             catch (Exception ex)
             {
@@ -144,6 +149,9 @@ namespace ResiApp.Services.Implementations
                     return new Response<Usuario?>(false, "El usuario está inactivo");
                 }
 
+                usuario.Login += 1;
+                _context.Update(usuario);
+                _context.SaveChanges();
                 return new Response<Usuario?>(true, "Autenticación exitosa", usuario);
             }
             catch (Exception ex)
@@ -167,6 +175,7 @@ namespace ResiApp.Services.Implementations
         new Claim(ClaimTypes.Email, usuario.CorreoElectronico),
         new Claim(ClaimTypes.Name, usuario.Nombre),
         new Claim(ClaimTypes.Surname, usuario.Apellido),
+        new Claim(ClaimTypes.OtherPhone, usuario.Login.ToString()),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
     };
 

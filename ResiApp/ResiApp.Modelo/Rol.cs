@@ -19,13 +19,16 @@ namespace ResiApp.Models
         [Required]
         [StringLength(50)]
         [Column("nombre")]
-        public string Nombre { get; set; }
+        public string Nombre { get; set; } = "";
 
         /// <summary>
         /// Descripción detallada del rol.
         /// </summary>
         [Column("descripcion")]
-        public string Descripcion { get; set; }
+        public string Descripcion { get; set; } = "";
+
+        [Column("mensaje")]
+        public string Mensaje { get; set; } = "";
 
         // Propiedades de navegación
         public ICollection<UsuarioRol> UsuariosRoles { get; set; }

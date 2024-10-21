@@ -65,6 +65,17 @@ namespace ResiApp.Models
         [Column("fecha_creacion")]
         public DateTime FechaCreacion { get; set; } = DateTime.Now;
 
+
+        [StringLength(160)]
+        [Column("reset_token")]
+        public string? ResetToken { get; set; }
+
+        [Column("reset_token_expiry")]
+        public DateTime? ResetTokenExpiry { get; set; }
+
+        [Column("login")]
+        public int Login { get; set; } = 0;
+
         // Propiedades de navegación
         public ICollection<UsuarioRol> UsuariosRoles { get; set; }
         public ICollection<ResidenteUnidad> ResidentesUnidades { get; set; }

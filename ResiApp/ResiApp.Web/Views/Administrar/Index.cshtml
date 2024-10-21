@@ -552,3 +552,16 @@
     </div>
 </div>
 
+@section Scripts{
+    <script>
+        var modalUrl = "@Url.Content("~/Administrar/ModalBienvenida")";
+        fetch(modalUrl)
+            .then(response => response.text())
+            .then(data => {
+                document.body.insertAdjacentHTML('beforeend', data);
+                var myModal = new bootstrap.Modal(document.getElementById('profile-welcome'));
+                myModal.show();
+            })
+            .catch(error => console.error('Error al cargar el modal:', error));
+    </script>
+}
